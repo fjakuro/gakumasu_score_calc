@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>学マス最終スコア計算機</title>
+        <link rel="stylesheet" href="main.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
+        <script src="main.js"></script>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="main-container">
+                <h1>学マス最終スコア計算機</h1>
+                <h3>ステータスを入力</h3>
+                <div id="select-file">
+                    <label for="input-file">スクリーンショットから入力</label>
+                    <input type="file" id="input-file" />             
+                </div>
+                <div id="parameters-wrapper">
+                    <div id="statuses" class="parameters-input">
+                        <p>
+                            <span>Vo</span>:
+                            <input type="number" id="vo" value="0" min="0" max="1500" />
+                        </p>
+                        <p>
+                            <span>Da</span>:
+                            <input type="number" id="da" value="0" min="0" max="1500" />
+                        </p>
+                        <p>
+                            <span>Vi</span>:
+                            <input type="number" id="vi" value="0" min="0" max="1500" />
+                        </p>
+                    </div>
+                    <div id="file">
+                        <img class="preview" src="default0.jpg" />
+                    </div>
+                </div>
+                <h3>条件を入力</h3>
+                <div class="condition">
+                    <input type="radio" id="before" name="is-before-exam" checked="True" />
+                    <label for="before">最終試験前</label>
+                    <input type="radio" id="after" name="is-before-exam" />
+                    <label for="after">最終試験後</label>
+                </div>
+                <div class="condition-messages">
+                    <p id="msg-before">最終試験後のステータス増加を<span>含まない</span>ステータスを入力してください。</p>
+                    <p id="msg-after">最終試験後のステータス増加を<span>含む</span>ステータスを入力してください。</p>
+                </div>
+                <div id="order" class="condition">
+                    <input type="radio" id="order-1" name="order" checked=True />
+                    <label for="order-1">1位</label>
+                    <input type="radio" id="order-2" name="order" />
+                    <label for="order-2">2位</label>
+                    <input type="radio" id="order-3" name="order" />
+                    <label for="order-3">3位</label>
+                    <input type="radio" id="order-4" name="order" />
+                    <label for="order-4">4位～</label>
+                </div>
+                <div id="exam-and-evaluation">
+                    <h3 id="heading-evaluation">最終スコア</h3>
+                    <p>最終試験スコアを入力するとプロデュース評価が、<br>プロデュース評価を入力すると必要な最終試験のスコアが表示されます。</p>
+                    <div>
+                        <span>最終試験スコア:</span>
+                        <input type="number" id="exam" value="0" min="0">
+                    </div>
+                    <div>
+                        <span>プロデュース評価:</span>
+                        <input type="number" id="evaluation" value="0">
+                    </div>
+                    <p id="ref">参考</p>
+                    <ul>
+                        <li><span>評価S</span>: 13000～</li>
+                        <li><span>評価A+</span>: 11500～</li>
+                        <li><span>評価A</span>: 10000～</li>
+                        <li><span>評価B+</span>: 8000～</li>
+                        <li><span>評価B</span>: 6000～</li>
+                        <li><span>評価C+</span>: 4500～</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="image-container">
+                <img class="preview" src="default0.jpg" />
+            </div>
+        </div>
+    </body>
+</html>
