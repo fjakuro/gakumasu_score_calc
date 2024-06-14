@@ -71,31 +71,6 @@ function addExamBonus(parameter, order) {
     }
 }
 
-function recognizeParameters(imageSrc, leftX, topY, rightX, bottomY) {
-    var width = rightX - leftX;
-    var height = bottomY - topY;
-    return new Promise((resolve, reject) => {
-        var $canvas = $("<canvas>");
-        var ctx = $canvas[0].getContext("2d");
-        var $img = $("<img>");
-        $img.on("load", function() {
-            $canvas.attr("width", width);
-            $canvas.attr("height", height);
-            ctx.drawImage($img[0], leftX, topY, width, height, 0, 0, width, height);
-            var trimmedImageSrc = $canvas[0].toDataURL();
-            Tesseract.recognize(trimmedImageSrc, 'jpn')
-                .then(({ data: { text } }) => {
-                    resolve(text);
-                })
-                .catch((err) => {
-                    console.error(err);
-                    reject(err);
-                })
-        });
-        $img.attr('src', imageSrc);
-    });
-}
-
 function getTotalParameters() {
     var vo = Number($("#vo").val());
     var da = Number($("#da").val());
@@ -137,18 +112,68 @@ function calcNecessaryScoce() {
     $("#exam").val(originalExam);
 }
 
-$(function() {
-    $("#before").on("click", function() {
-        $("#order").css("display", "flex");
-        $("#msg-before").css("display", "inline");
-        $("#msg-after").css("display", "none");
+function binarize(imageSrc, threshold) {
+    return new Promise((resolve, reject) => {
+        var $canvas = $("<canvas>");
+        var ctx = $canvas[0].getContext("2d");
+        var $img = $("<img>");
+        $img.on("load", function() {
+            $canvas.attr("width", this.width);
+            $canvas.attr("height", this.height);
+            ctx.drawImage($img[0], 0, 0);
+            
+            var imageData = ctx.getImageData(0, 0, $canvas[0].width, $canvas[0].height);
+            var data = imageData.data;
+            console.log(data);
+            for (var i = 0; i < data.length; i += 4) {
+                var avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                if (avg >= threshold) {
+                    var value = 252;
+                } else {
+                    var value = 0;
+                }
+                data[i]     = value;
+                data[i + 1] = value;
+                data[i + 2] = value;
+            }
+            ctx.putImageData(imageData, 0, 0);
+            
+            var dataURL = $canvas[0].toDataURL();
+            resolve(dataURL);
+        });
+        $img.on("error", function(err) {
+            reject(err);
+        });
+        $img.attr('src', imageSrc);
     });
-    $("#after").on("click", function() {
-        $("#order").css("display", "none");
-        $("#msg-before").css("display", "none");
-        $("#msg-after").css("display", "inline");
-    });
+}
 
+function recognizeParameters(imageSrc, leftX, topY, rightX, bottomY) {
+    var width = rightX - leftX;
+    var height = bottomY - topY;
+    return new Promise((resolve, reject) => {
+        var $canvas = $("<canvas>");
+        var ctx = $canvas[0].getContext("2d");
+        var $img = $("<img>");
+        $img.on("load", function() {
+            $canvas.attr("width", width);
+            $canvas.attr("height", height);
+            ctx.drawImage($img[0], leftX, topY, width, height, 0, 0, width, height);
+            var trimmedImageSrc = $canvas[0].toDataURL();
+            Tesseract.recognize(trimmedImageSrc, 'jpn')
+                .then(({ data: { text } }) => {
+                    resolve(text);
+                })
+                .catch((err) => {
+                    console.error(err);
+                    reject(err);
+                })
+        });
+        $img.attr('src', imageSrc);
+    });
+}
+
+$(function() {
     $("#input-file").on("change", function(e) {
         var file = e.target.files[0];
         var reader = new FileReader();
@@ -159,21 +184,26 @@ $(function() {
                 $(".preview").attr("src", img.src);
                 // console.log(img.src);
             };
-            
-            // Vocal
-            recognizeParameters(img.src, 115, 960, 230, 1005)
-                .then((text) => {
-                    $("#vo").val(Number(text));
-                });
-            // Dance
-            recognizeParameters(img.src, 115, 1045, 230, 1085)
-                .then((text) => {
-                    $("#da").val(Number(text));
-                });
-            // Visual
-                recognizeParameters(img.src, 115, 1130, 230, 1170)
-                .then((text) => {
-                    $("#vi").val(Number(text));
+            binarize(img.src, 200)
+                .then((dataUrl) => {
+                    // Vocal
+                    recognizeParameters(dataUrl, 115, 960, 230, 1005)
+                        .then((text) => {
+                            $("#vo").val(Number(text));
+                        });
+                    // Dance
+                    recognizeParameters(dataUrl, 115, 1045, 230, 1085)
+                        .then((text) => {
+                            $("#da").val(Number(text));
+                        });
+                    // Visual
+                        recognizeParameters(dataUrl, 115, 1130, 230, 1170)
+                        .then((text) => {
+                            $("#vi").val(Number(text));
+                        });
+                            }) 
+                .catch((err) => {
+                    console.log(err);
                 });
         };
         reader.readAsDataURL(file);
@@ -184,6 +214,17 @@ $(function() {
     });
     $(".preview").on("click", function() {
         $("#input-file").click();
+    });
+
+    $("#before").on("click", function() {
+        // $("#order").css("display", "flex");
+        $("#msg-before").css("display", "inline");
+        $("#msg-after").css("display", "none");
+    });
+    $("#after").on("click", function() {
+        // $("#order").css("display", "none");
+        $("#msg-before").css("display", "none");
+        $("#msg-after").css("display", "inline");
     });
 
     $("#exam").on("change", function(){
