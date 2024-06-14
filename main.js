@@ -124,7 +124,6 @@ function binarize(imageSrc, threshold) {
             
             var imageData = ctx.getImageData(0, 0, $canvas[0].width, $canvas[0].height);
             var data = imageData.data;
-            console.log(data);
             for (var i = 0; i < data.length; i += 4) {
                 var avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
                 if (avg >= threshold) {
@@ -225,6 +224,25 @@ $(function() {
         // $("#order").css("display", "none");
         $("#msg-before").css("display", "none");
         $("#msg-after").css("display", "inline");
+    });
+
+    $("input[name='order']").on("change", function() {
+        var order = $("input[name='order']:checked").attr("id");
+        var bonus = 0;
+        switch (order) {
+            case "order-1":
+                bonus =  1700;
+                break;
+            case "order-2":
+                bonus = 900;
+                break;
+            case "order-3":
+                bonus = 500;
+                break;
+            default: 
+                bonus =  0;
+        }
+        $("#order-bonus span").html(bonus);
     });
 
     $("#exam").on("change", function(){
