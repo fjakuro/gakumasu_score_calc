@@ -14,7 +14,7 @@ h1 {
     padding: 7px 20px 3px;
     border-radius: 0 0 20px 0;
     background-color: #f39800;
-    color: #f2f2f2;
+    color: #fff;
 }
 
 h3 {
@@ -60,6 +60,7 @@ h3 {
             border-bottom: 1px solid #f39800;
             border-radius: 0 10px 0 10px;
             background-color: #f39800;
+            color: #fff;
         }
 
         #input-file {
@@ -149,6 +150,7 @@ h3 {
 
             &:checked + label {
                 background-color: #f39800;
+                color: #fff;
             }
         }
 
