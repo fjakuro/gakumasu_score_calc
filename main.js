@@ -23,8 +23,10 @@ function processedExam(exam) {
     }
     if (exam < 40000) {
         return Math.floor(result + (exam - 30000) * 0.02);
+    } else {
+        result += 10000 * 0.02;
     }
-    return -1;
+    return Math.floor(result + (exam - 40000) * 0.01);
 }
 
 function invertedExam(processed) {
@@ -40,7 +42,7 @@ function invertedExam(processed) {
         return Math.floor(processed / 0.15) + origin;
     } else {
         origin += 5000;
-        processed -= 5000 * 0.3;
+        processed -= 5000 * 0.15;
     }
     if (processed < 10000 * 0.08) {
         return Math.floor(processed / 0.08) + origin;
@@ -58,6 +60,7 @@ function invertedExam(processed) {
         return Math.floor(processed / 0.02) + origin;
     } else {
         origin += 10000;
+        processed -= 10000 * 0.02;
         return Math.floor(processed / 0.01) + origin;
     }
 }
@@ -81,6 +84,7 @@ function getTotalParameters() {
             return addExamBonus(value, order)
         });
     }
+    console.log(vo, da, vi);
     total_parameter = Math.floor((vo + da + vi) * 2.3);
     return total_parameter;
 }
@@ -95,11 +99,24 @@ function getOrderBonus() {
     }
 }
 
+function calcTarget() {
+    var target = $("input[name='calc-target']:checked").attr("id");
+    if (target === "final2exam") {
+        calcNecessaryScoce();
+    } else {
+        calcEvaluation();
+    }
+}
+
 function calcEvaluation() {
     var total_parameter = getTotalParameters();
     var exam = Number($("#exam").val());
     var order_score = getOrderBonus();
     var evaluation = total_parameter + processedExam(exam) + order_score;
+    console.log("#########");
+    console.log(total_parameter);
+    console.log(processedExam(exam));
+    console.log(order_score);
     $("#evaluation").val(evaluation);
 }
 
@@ -109,6 +126,10 @@ function calcNecessaryScoce() {
     var order_score = getOrderBonus();
     var processed = evaluation - (total_parameter + order_score);
     var originalExam = invertedExam(processed);
+    console.log("=========");
+    console.log(total_parameter);
+    console.log(processed, originalExam);
+    console.log(order_score);
     $("#exam").val(originalExam);
 }
 
@@ -185,6 +206,7 @@ $(function() {
             };
             binarize(img.src, 200)
                 .then((dataUrl) => {
+                    // $(".preview").attr("src", dataUrl);
                     // Vocal
                     recognizeParameters(dataUrl, 115, 960, 230, 1005)
                         .then((text) => {
@@ -231,7 +253,7 @@ $(function() {
         var bonus = 0;
         switch (order) {
             case "order-1":
-                bonus =  1700;
+                bonus = 1700;
                 break;
             case "order-2":
                 bonus = 900;
@@ -245,9 +267,9 @@ $(function() {
         $("#order-bonus span").html(bonus);
     });
 
-    $("#exam").on("change", function(){
-        calcEvaluation();
-    });
+    $("#exam").on("change", calcTarget).on("focusout", calcTarget);
+
+
 
     $("#evaluation").on("change", function(){
         calcNecessaryScoce();

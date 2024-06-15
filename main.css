@@ -200,8 +200,54 @@ h3 {
         & p {
             margin: 10px;
         }
+
+        #decide-calc-target {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin: 15px;
         
-        & div {
+            label {
+                display: flex;
+                align-items: center;
+                margin-bottom: 10px;
+                cursor: pointer;
+        
+                input[type="radio"] {
+                    appearance: none;
+                    width: 18px;
+                    height: 18px;
+                    border-radius: 50%;
+                    border: 2px solid #ccc;
+                    margin-right: 10px;
+                    position: relative;
+        
+                    &:checked {
+                        border-color: #f39800;
+        
+                        &::before {
+                            content: "";
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            width: 10px;
+                            height: 10px;
+                            border-radius: 50%;
+                            background-color: #f39800;
+                        }
+                    }
+                }
+        
+                .radio-label {
+                    width: 400px;
+                    text-align: left;
+                    font-size: 16px;
+                }
+            }
+        }
+        
+        .score {
             margin: 10px;
             border-bottom: 2px solid #aaa;
             font-size: 20px;

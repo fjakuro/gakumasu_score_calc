@@ -62,12 +62,21 @@
                 <p id="order-bonus">プロデュース評価 +<span>1700</span></p>
                 <div id="exam-and-evaluation">
                     <h3 id="heading-evaluation">最終スコア</h3>
-                    <p>最終試験スコアを入力するとプロデュース評価が、<br>プロデュース評価を入力すると必要な最終試験のスコアが表示されます。</p>
-                    <div>
+                    <div id="decide-calc-target">
+                        <label for="final2exam">
+                            <input type="radio" id="final2exam" name="calc-target" checked="True" />
+                            <span class="radio-label">プロデュース評価から必要な最終試験スコアを計算</span>
+                        </label>
+                        <label for="exam2final">
+                            <input type="radio" id="exam2final" name="calc-target" />
+                            <span class="radio-label">最終試験スコアからプロデュース評価を計算</span>
+                        </label>
+                    </div>
+                    <div class="score">
                         <span>最終試験スコア:</span>
                         <input type="number" id="exam" value="0" min="0">
                     </div>
-                    <div>
+                    <div class="score">
                         <span>プロデュース評価:</span>
                         <input type="number" id="evaluation" value="0">
                     </div>
