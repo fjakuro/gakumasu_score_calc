@@ -84,7 +84,6 @@ function getTotalParameters() {
             return addExamBonus(value, order)
         });
     }
-    console.log(vo, da, vi);
     total_parameter = Math.floor((vo + da + vi) * 2.3);
     return total_parameter;
 }
@@ -113,10 +112,6 @@ function calcEvaluation() {
     var exam = Number($("#exam").val());
     var order_score = getOrderBonus();
     var evaluation = total_parameter + processedExam(exam) + order_score;
-    console.log("#########");
-    console.log(total_parameter);
-    console.log(processedExam(exam));
-    console.log(order_score);
     $("#evaluation").val(evaluation);
 }
 
@@ -126,10 +121,6 @@ function calcNecessaryScoce() {
     var order_score = getOrderBonus();
     var processed = evaluation - (total_parameter + order_score);
     var originalExam = invertedExam(processed);
-    console.log("=========");
-    console.log(total_parameter);
-    console.log(processed, originalExam);
-    console.log(order_score);
     $("#exam").val(originalExam);
 }
 
@@ -238,12 +229,10 @@ $(function() {
     });
 
     $("#before").on("click", function() {
-        // $("#order").css("display", "flex");
         $("#msg-before").css("display", "inline");
         $("#msg-after").css("display", "none");
     });
     $("#after").on("click", function() {
-        // $("#order").css("display", "none");
         $("#msg-before").css("display", "none");
         $("#msg-after").css("display", "inline");
     });
@@ -267,11 +256,32 @@ $(function() {
         $("#order-bonus span").html(bonus);
     });
 
-    $("#exam").on("change", calcTarget).on("focusout", calcTarget);
 
+    $("#vo").on("change focusout", calcTarget);
+    $("#da").on("change focusout", calcTarget);
+    $("#vi").on("change focusout", calcTarget);
+    $("input[name='is-before-exam']").on("change focusout", calcTarget);
+    $("input[name='order']").on("change focusout", calcTarget);
+    $("input[name='calc-target']").on("change focusout", calcTarget);
+    $("#exam").on("change focusout", calcTarget);
+    $("#evaluation").on("change focusout", calcTarget);
 
-
-    $("#evaluation").on("change", function(){
-        calcNecessaryScoce();
+    $("#s").on("click", function() {
+        $("#evaluation").val(13000);
+    });
+    $("#a_p").on("click", function() {
+        $("#evaluation").val(11500);
+    });
+    $("#a").on("click", function() {
+        $("#evaluation").val(10000);
+    });
+    $("#b_p").on("click", function() {
+        $("#evaluation").val(8000);
+    });
+    $("#b").on("click", function() {
+        $("#evaluation").val(6000);
+    });
+    $("#c_p").on("click", function() {
+        $("#evaluation").val(4500);
     });
 });
