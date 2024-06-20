@@ -185,15 +185,13 @@ function recognizeParameters(imageSrc, points) {
     });
 }
 
-function getParametersArea(imgSrc, margin=5) {
+function getParametersArea(imgSrc, margin=10) {
     return new Promise((resolve, reject) => {
         const img = new Image();
         img.onload = function() {
             const width = img.width;
             const height = img.height;
             const ratio = width / height;
-            console.log(ratio);
-            console.log(9 / 16 * (100 - margin) / 100, 9 / 16 * (100 + margin) / 100);
             if (ratio > 9 / 16 * (100 - margin) / 100 && ratio < 9 / 16 * (100 + margin) / 100) {
                 const points = [
                     [width * 0.15, height * 0.71, width * 0.31, height * 0.77],
@@ -201,7 +199,15 @@ function getParametersArea(imgSrc, margin=5) {
                     [width * 0.15, height * 0.83, width * 0.31, height * 0.89],
                 ];
                 resolve(points);
-            }
+            } else if (ratio > 3 / 4 * (100 - margin) / 100 && ratio < 3 / 4 * (100 + margin) / 100) {
+                console.log("4:3");
+                const points = [
+                    [width * 0.22, height * 0.70, width * 0.35, height * 0.75],
+                    [width * 0.22, height * 0.75, width * 0.35, height * 0.82],
+                    [width * 0.22, height * 0.82, width * 0.35, height * 0.87],
+                ];
+                resolve(points);
+            };
         };
         img.src = imgSrc;
     });
@@ -215,18 +221,18 @@ $(function() {
             var img = new Image();
             img.src = f.target.result;
             img.onload = function() {
-                $(".preview").attr("src", img.src);
+                // $(".preview").attr("src", img.src);
                 // console.log(img.src);
             };
             getParametersArea(img.src)
                 .then((points) => {
                     var [voArea, daArea, viArea] = points;
-                    console.log(voArea);
-                    console.log(daArea);
-                    console.log(viArea);
-                    binarize(img.src, 200)
+                    // console.log(voArea);
+                    // console.log(daArea);
+                    // console.log(viArea);
+                    binarize(img.src, 175)
                         .then((dataUrl) => {
-                            // $(".preview").attr("src", dataUrl);
+                            $(".preview").attr("src", dataUrl);
                             // Vocal
                             recognizeParameters(dataUrl, voArea)
                                 .then((text) => {
