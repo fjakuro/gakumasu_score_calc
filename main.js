@@ -159,7 +159,8 @@ function binarize(imageSrc, threshold) {
     });
 }
 
-function recognizeParameters(imageSrc, leftX, topY, rightX, bottomY) {
+function recognizeParameters(imageSrc, points) {
+    var [leftX, topY, rightX, bottomY] = points;
     var width = rightX - leftX;
     var height = bottomY - topY;
     return new Promise((resolve, reject) => {
@@ -184,6 +185,28 @@ function recognizeParameters(imageSrc, leftX, topY, rightX, bottomY) {
     });
 }
 
+function getParametersArea(imgSrc, margin=5) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = function() {
+            const width = img.width;
+            const height = img.height;
+            const ratio = width / height;
+            console.log(ratio);
+            console.log(9 / 16 * (100 - margin) / 100, 9 / 16 * (100 + margin) / 100);
+            if (ratio > 9 / 16 * (100 - margin) / 100 && ratio < 9 / 16 * (100 + margin) / 100) {
+                const points = [
+                    [width * 0.15, height * 0.71, width * 0.31, height * 0.77],
+                    [width * 0.15, height * 0.77, width * 0.31, height * 0.83],
+                    [width * 0.15, height * 0.83, width * 0.31, height * 0.89],
+                ];
+                resolve(points);
+            }
+        };
+        img.src = imgSrc;
+    });
+}
+
 $(function() {
     $("#input-file").on("change", function(e) {
         var file = e.target.files[0];
@@ -195,25 +218,35 @@ $(function() {
                 $(".preview").attr("src", img.src);
                 // console.log(img.src);
             };
-            binarize(img.src, 200)
-                .then((dataUrl) => {
-                    // $(".preview").attr("src", dataUrl);
-                    // Vocal
-                    recognizeParameters(dataUrl, 115, 960, 230, 1005)
-                        .then((text) => {
-                            $("#vo").val(Number(text));
+            getParametersArea(img.src)
+                .then((points) => {
+                    var [voArea, daArea, viArea] = points;
+                    console.log(voArea);
+                    console.log(daArea);
+                    console.log(viArea);
+                    binarize(img.src, 200)
+                        .then((dataUrl) => {
+                            // $(".preview").attr("src", dataUrl);
+                            // Vocal
+                            recognizeParameters(dataUrl, voArea)
+                                .then((text) => {
+                                    $("#vo").val(Number(text));
+                                });
+                            // Dance
+                            recognizeParameters(dataUrl, daArea)
+                                .then((text) => {
+                                    $("#da").val(Number(text));
+                                });
+                            // Visual
+                                recognizeParameters(dataUrl, viArea)
+                                .then((text) => {
+                                    $("#vi").val(Number(text));
+                                });
+                        }) 
+                        .catch((err) => {
+                            console.log(err);
                         });
-                    // Dance
-                    recognizeParameters(dataUrl, 115, 1045, 230, 1085)
-                        .then((text) => {
-                            $("#da").val(Number(text));
-                        });
-                    // Visual
-                        recognizeParameters(dataUrl, 115, 1130, 230, 1170)
-                        .then((text) => {
-                            $("#vi").val(Number(text));
-                        });
-                            }) 
+                })
                 .catch((err) => {
                     console.log(err);
                 });
@@ -255,7 +288,6 @@ $(function() {
         }
         $("#order-bonus span").html(bonus);
     });
-
 
     $("#vo").on("change focusout", calcTarget);
     $("#da").on("change focusout", calcTarget);
