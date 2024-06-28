@@ -306,20 +306,26 @@ $(function() {
 
     $("#s").on("click", function() {
         $("#evaluation").val(13000);
+        calcTarget();
     });
     $("#a_p").on("click", function() {
         $("#evaluation").val(11500);
+        calcTarget();
     });
     $("#a").on("click", function() {
         $("#evaluation").val(10000);
+        calcTarget();
     });
     $("#b_p").on("click", function() {
         $("#evaluation").val(8000);
+        calcTarget();
     });
     $("#b").on("click", function() {
         $("#evaluation").val(6000);
+        calcTarget();
     });
     $("#c_p").on("click", function() {
         $("#evaluation").val(4500);
+        calcTarget();
     });
 });
