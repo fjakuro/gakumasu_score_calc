@@ -221,7 +221,7 @@ $(function() {
             var img = new Image();
             img.src = f.target.result;
             img.onload = function() {
-                // $(".preview").attr("src", img.src);
+                $(".preview").attr("src", img.src);
                 // console.log(img.src);
             };
             getParametersArea(img.src)
@@ -232,7 +232,7 @@ $(function() {
                     // console.log(viArea);
                     binarize(img.src, 175)
                         .then((dataUrl) => {
-                            $(".preview").attr("src", dataUrl);
+                            // $(".preview").attr("src", dataUrl);
                             // Vocal
                             recognizeParameters(dataUrl, voArea)
                                 .then((text) => {
